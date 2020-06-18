@@ -1,6 +1,8 @@
+// @ts-ignore
 import Phaser from "phaser";
 import { gameOptions, fontConfig } from "../app"
 
+// @ts-ignore
 export default class MenuScene extends Phaser.Scene {
   constructor() {
     super("menuScene");
@@ -16,13 +18,16 @@ export default class MenuScene extends Phaser.Scene {
     let position_x = offset;
     let position_y = tileSize * 2;
 
+    // @ts-ignore
     let element = this.add.dom(position_x, position_y).createFromCache("loginform");
 
     element.addListener("click");
     element.parent.style.overflow = null;
 
     element.on("click", event => {
+      // @ts-ignore
       let username = document.getElementById("username").value;
+      // @ts-ignore
       let game = document.getElementById("game").value;
 
       if (event.target.name === "joinButton") {
@@ -30,6 +35,7 @@ export default class MenuScene extends Phaser.Scene {
           let sceneParams = {action: "join", username: username, game: game};
 
           selfCanvas.style.display = "block";
+          // @ts-ignore
           this.scene.start("gameScene", sceneParams);
         }
       } else if (event.target.name === "createButton") {
@@ -37,6 +43,7 @@ export default class MenuScene extends Phaser.Scene {
           let sceneParams = {action: "create", username: username, game: game};
 
           selfCanvas.style.display = "block";
+          // @ts-ignore
           this.scene.start("gameScene", sceneParams);
         }
 

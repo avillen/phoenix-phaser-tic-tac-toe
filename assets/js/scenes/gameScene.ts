@@ -1,8 +1,10 @@
+// @ts-ignore
 import Phaser from "phaser";
 import Game from "../core/game";
 import BoardInfo from "../core/boardInfo";
 import { gameOptions, fontConfig } from "../app"
 
+// @ts-ignore
 export default class GameScene extends Phaser.Scene {
   gameState: Game;
   statusText: any;
@@ -14,6 +16,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create(config: {action: string, game: string, username: string}) {
+    // @ts-ignore
     this.statusText = this.add.text(16, 16, "", fontConfig);
 
     if (config.action == "create") {
@@ -31,16 +34,19 @@ export default class GameScene extends Phaser.Scene {
       if (this.gameState.errorMessage) {
         this.statusText.setText(this.gameState.errorMessage);
         this.gameState = new Game();
+        // @ts-ignore
         this.scene.start("menuScene");
 
       } else if (this.gameState.status === "winner") {
         this.statusText.setText("Ha ganado " + this.gameState.turn);
         this.gameState = new Game();
+        // @ts-ignore
         this.scene.start("menuScene");
 
       } else if (this.gameState.status === "empate") {
         this.statusText.setText("Empate");
         this.gameState = new Game();
+        // @ts-ignore
         this.scene.start("menuScene");
 
       } else if (this.gameState.status === "waiting_for_player") {
@@ -54,6 +60,7 @@ export default class GameScene extends Phaser.Scene {
     } else if (this.gameState.errorMessage) {
       this.statusText.setText(this.gameState.errorMessage);
       this.gameState = new Game();
+      // @ts-ignore
       this.scene.start("menuScene");
     }
   }
@@ -71,6 +78,7 @@ export default class GameScene extends Phaser.Scene {
         let position_x = (tileSize / 2) + offset + (i * (tileSize + offset));
         let position_y = (tileSize / 2) + offset + (j * (tileSize + offset)) + topMargin;
 
+        // @ts-ignore
         let cellSprite = this.add.sprite(position_x, position_y, "blankSquare");
 
         cellSprite.index = cont++;
@@ -80,8 +88,10 @@ export default class GameScene extends Phaser.Scene {
         let cell = boardInfo.getCell(i, j);
 
         if (cell.player == "X") {
+          // @ts-ignore
           this.add.sprite(position_x, position_y, 'thePlayers', 1);
         } else if (cell.player == "O") {
+          // @ts-ignore
           this.add.sprite(position_x, position_y, 'thePlayers', 0);
         }
       }
@@ -89,7 +99,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   handleClick(event) {
+    // @ts-ignore
     let owner = this.scene;
+    // @ts-ignore
     owner.gameState.move(this.index);
   }
 }

@@ -1,3 +1,4 @@
+// @ts-ignore
 import {Socket} from "phoenix"
 
 let socket = new Socket("/socket", {});

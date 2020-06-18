@@ -1,3 +1,4 @@
+// @ts-ignore
 import Phaser from "phaser";
 import GameScene from "./scenes/gameScene";
 import BootScene from "./scenes/bootScene";
@@ -16,8 +17,10 @@ export const fontConfig = {
   fill: "#000"
 };
 
+// @ts-ignore
 const _css = require("../css/app.scss");
 
+// @ts-ignore
 export class HytaGame extends Phaser.Game {
   constructor(config) {
     super(config);
