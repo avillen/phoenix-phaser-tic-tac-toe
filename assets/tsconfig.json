@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "incremental": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "typeRoots": [
+    "./node_modules/@types",
+    "./node_modules/phaser/types/"
+  ],
+  "types": [
+    "Phaser"
+  ]
+}
