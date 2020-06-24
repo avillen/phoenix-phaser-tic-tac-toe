@@ -48,6 +48,28 @@ defmodule HytaTest do
     end
   end
 
+  describe "move" do
+    test "empate" do
+      game_name = "#{@name}-move-success-empate-game_name"
+      player_1 = %Player{nick: "Yago"}
+      player_2 = %Player{nick: "Hugo"}
+
+      {:ok, _game} = Hyta.create_game(game_name, player_1)
+      {:ok, game} = Hyta.join_game(game_name, player_2)
+
+      {:ok, game} = Hyta.move(game_name, game.turn, 0, 0)
+      {:ok, game} = Hyta.move(game_name, game.turn, 0, 1)
+      {:ok, game} = Hyta.move(game_name, game.turn, 0, 2)
+      {:ok, game} = Hyta.move(game_name, game.turn, 1, 0)
+      {:ok, game} = Hyta.move(game_name, game.turn, 1, 1)
+      {:ok, game} = Hyta.move(game_name, game.turn, 1, 2)
+      {:ok, game} = Hyta.move(game_name, game.turn, 2, 0)
+      {:ok, game} = Hyta.move(game_name, game.turn, 2, 1)
+
+      assert {:empate, _} = Hyta.move(game_name, game.turn, 2, 2)
+    end
+  end
+
   describe "get_game" do
     test "success" do
       game_name = "#{@name}-get_game-success-game_name"

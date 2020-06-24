@@ -3,8 +3,10 @@ defmodule HytaWeb.GameChannel.Serializer do
   Builds Game responses
   """
 
+  require Logger
+
   def show(game) do
-    %{
+    res = %{
       response: %{
         name: game.name,
         board_info: %{
@@ -13,10 +15,14 @@ defmodule HytaWeb.GameChannel.Serializer do
         },
         player_1: build_player(game.player_1),
         player_2: build_player(game.player_2),
-        status: game.status,
+        status: Atom.to_string(game.status),
         turn: build_player(game.turn)
       }
     }
+
+    Logger.info(inspect({__MODULE__, :show, res}))
+
+    res
   end
 
   def error(reason) do
