@@ -4,6 +4,8 @@ import GameScene from "./scenes/gameScene";
 import BootScene from "./scenes/bootScene";
 import MenuScene from "./scenes/menuScene";
 
+const _css = require("../css/app.scss");
+
 export const gameOptions = {
   boardSize: 3,
   tileSize: 200,
@@ -16,9 +18,6 @@ export const fontConfig = {
   fontSize: "32px",
   fill: "#000"
 };
-
-// @ts-ignore
-const _css = require("../css/app.scss");
 
 // @ts-ignore
 export class HytaGame extends Phaser.Game {

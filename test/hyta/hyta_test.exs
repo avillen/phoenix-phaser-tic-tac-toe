@@ -1,47 +1,22 @@
 defmodule HytaTest do
   use ExUnit.Case
 
-  alias Hyta.Core.{
-    BoardInfo,
-    Game,
-    Player
-  }
+  import Hyta.Support.Core.Player, only: [build_player: 0]
+  import Hyta.Support.Core.Game, only: [build_new_game: 0]
 
   @name __MODULE__
 
   describe "create_game" do
     test "success" do
-      game_name = "#{@name}-create_game-success-game_name"
-      player = %Player{nick: "Yago"}
+      game = build_new_game()
 
-      response = %Game{
-        board_info: %BoardInfo{
-          ancho: 3,
-          board: %{
-            {0, 0} => nil,
-            {0, 1} => nil,
-            {0, 2} => nil,
-            {1, 0} => nil,
-            {1, 1} => nil,
-            {1, 2} => nil,
-            {2, 0} => nil,
-            {2, 1} => nil,
-            {2, 2} => nil
-          }
-        },
-        name: game_name,
-        player_1: player,
-        player_2: nil,
-        status: :waiting_for_player,
-        turn: nil
-      }
-
-      assert {:ok, response} == Hyta.create_game(game_name, player)
+      assert {:ok, game} == Hyta.create_game(game.name, game.player_1, game.board_info.ancho)
+      assert [{_, nil}] = Registry.lookup(Hyta.Registry, game.name)
     end
 
     test "game already_started" do
       game_name = "#{@name}-create_game-already_started-game_name"
-      player = %Player{nick: "Hugo"}
+      player = build_player()
 
       assert {:ok, _response} = Hyta.create_game(game_name, player)
       assert {:error, :already_started} == Hyta.create_game(game_name, player)
@@ -51,11 +26,12 @@ defmodule HytaTest do
   describe "move" do
     test "empate" do
       game_name = "#{@name}-move-success-empate-game_name"
-      player_1 = %Player{nick: "Yago"}
-      player_2 = %Player{nick: "Hugo"}
+      player_1 = build_player()
+      player_2 = build_player()
 
       {:ok, _game} = Hyta.create_game(game_name, player_1)
-      {:ok, game} = Hyta.join_game(game_name, player_2)
+
+      assert {:ok, game} = Hyta.join_game(game_name, player_2)
 
       {:ok, game} = Hyta.move(game_name, game.turn, 0, 0)
       {:ok, game} = Hyta.move(game_name, game.turn, 0, 1)
@@ -67,13 +43,14 @@ defmodule HytaTest do
       {:ok, game} = Hyta.move(game_name, game.turn, 2, 1)
 
       assert {:empate, _} = Hyta.move(game_name, game.turn, 2, 2)
+      assert [] == Registry.lookup(Hyta.Registry, game.name)
     end
   end
 
   describe "get_game" do
     test "success" do
       game_name = "#{@name}-get_game-success-game_name"
-      player = %Player{nick: "Yago"}
+      player = build_player()
 
       {:ok, game} = Hyta.create_game(game_name, player)
 

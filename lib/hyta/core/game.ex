@@ -13,7 +13,7 @@ defmodule Hyta.Core.Game do
   @type name :: String.t()
   @type board_info :: BoardInfo.t()
   @type player :: Player.t()
-  @type status :: :waiting_for_player | :ready | :started | :winner | :terminated
+  @type status :: :waiting_for_player | :ready | :started | :winner | :empate
   @type turn :: Player.t()
 
   @type t :: %Game{
@@ -53,24 +53,26 @@ defmodule Hyta.Core.Game do
 
   def join(_, _), do: {:error, :full_game}
 
-  @spec start(Game.t()) :: {:ok, Game.t()} | {:error, :missing_players}
-  def start(%Game{player_1: player_1, player_2: player_2} = game)
+  @spec start(Game.t(), function()) :: {:ok, Game.t()} | {:error, :missing_players}
+  def start(game, turn_func \\ &Enum.random/1)
+
+  def start(%Game{player_1: player_1, player_2: player_2} = game, turn_func)
       when player_1 != nil and player_2 != nil do
-    {:ok, %{game | status: :started, turn: Enum.random([player_1, player_2])}}
+    {:ok, %{game | status: :started, turn: turn_func.([player_1, player_2])}}
   end
 
-  def start(_), do: {:error, :missing_players}
+  def start(_, _), do: {:error, :missing_players}
 
   @spec move(Game.t(), player, non_neg_integer(), non_neg_integer()) ::
           {:ok, Game.t()} | {:winner, Game.t()} | {:empate, Game.t()} | {:error, atom()}
   def move(
         %Game{
           status: :started,
-          turn: player,
-          player_1: player,
+          turn: curent_player,
+          player_1: curent_player,
           player_2: next_player
         } = game,
-        player,
+        curent_player,
         x,
         y
       ) do
@@ -80,33 +82,31 @@ defmodule Hyta.Core.Game do
   def move(
         %Game{
           status: :started,
-          turn: player,
+          turn: curent_player,
           player_1: next_player,
-          player_2: player
+          player_2: curent_player
         } = game,
-        player,
+        curent_player,
         x,
         y
       ) do
     do_move(game, next_player, x, y, "O")
   end
 
-  def move(_, _, _, _), do: {:error, :not_your_turn}
+  def move(%Game{status: :started}, _, _, _), do: {:error, :not_your_turn}
+  def move(_, _, _, _), do: {:error, :not_started}
 
   defp do_move(game, next_player, x, y, value) do
     with {:ok, updated_game} <- move_in_board(game, x, y, value),
-         :no_winner <- check_board(updated_game.board_info, value),
-         {:ok, new_game} <- change_turn(updated_game, next_player) do
-      {:ok, new_game}
+         :not_finished <- game_board_status(updated_game, value) do
+      {:ok, change_turn(updated_game, next_player)}
     else
-      :winner ->
-        {:ok, updated_game} = move_in_board(game, x, y, value)
-        updated_game = %{updated_game | status: :winner}
+      {:winner, board} ->
+        updated_game = %{board | status: :winner}
         {:winner, updated_game}
 
-      :empate ->
-        {:ok, updated_game} = move_in_board(game, x, y, value)
-        updated_game = %{updated_game | status: :terminated}
+      {:empate, board} ->
+        updated_game = %{board | status: :empate}
         {:empate, updated_game}
 
       {:error, reason} ->
@@ -121,13 +121,13 @@ defmodule Hyta.Core.Game do
     end
   end
 
-  defp check_board(board, value) do
-    with false <- game_board_full?(board),
-         false <- game_winner?(board, value) do
-      :no_winner
+  defp game_board_status(game, value) do
+    with false <- game_board_full?(game.board_info),
+         false <- game_winner?(game.board_info, value) do
+      :not_finished
     else
-      :empate -> :empate
-      :winner -> :winner
+      :empate -> {:empate, game}
+      :winner -> {:winner, game}
     end
   end
 
@@ -145,5 +145,5 @@ defmodule Hyta.Core.Game do
     end
   end
 
-  defp change_turn(game, next_player), do: {:ok, %{game | turn: next_player}}
+  defp change_turn(game, next_player), do: %{game | turn: next_player}
 end

@@ -2,105 +2,97 @@ defmodule Hyta.Core.BoardInfoTest do
   use ExUnit.Case, async: true
   alias Hyta.Core.BoardInfo
 
+  import Hyta.Support.Core.BoardInfo,
+    only: [
+      build_board: 1,
+      build_board_info: 1
+    ]
+
   test "new/2" do
     board = %{
       {0, 0} => nil,
       {0, 1} => nil,
-      {0, 2} => nil,
       {1, 0} => nil,
-      {1, 1} => nil,
-      {1, 2} => nil,
-      {2, 0} => nil,
-      {2, 1} => nil,
-      {2, 2} => nil
+      {1, 1} => nil
     }
 
-    assert %BoardInfo{board: board, ancho: 3} == BoardInfo.new(3)
+    assert %BoardInfo{board: board, ancho: 2} == BoardInfo.new(2)
   end
 
   describe "set/4" do
     test "sets a cell of the board" do
-      board = BoardInfo.new(2)
+      ancho = 2
+      board_info = build_board_info(ancho: ancho)
 
-      board_response = %{
-        {0, 0} => nil,
-        {0, 1} => nil,
-        {1, 0} => nil,
-        {1, 1} => "x"
-      }
+      board_response = %{build_board(ancho) | {1, 1} => "x"}
 
-      assert {:ok, %BoardInfo{board: board_response, ancho: 2}} == BoardInfo.set(board, 1, 1, "x")
+      assert {:ok, %BoardInfo{board: board_response, ancho: ancho}} ==
+               BoardInfo.set(board_info, 1, 1, "x")
     end
 
     test "error when you try to set a taken cell" do
-      board = BoardInfo.new(3)
+      ancho = 2
+      board = %{build_board(ancho) | {1, 1} => "x"}
+      board_info = build_board_info(ancho: ancho, board: board)
 
-      {:ok, board} = BoardInfo.set(board, 1, 1, "x")
-
-      assert {:error, :position_taken} == BoardInfo.set(board, 1, 1, "x")
+      assert {:error, :position_taken} == BoardInfo.set(board_info, 1, 1, "x")
     end
 
     test "error when you try to set a cell that not exists" do
-      board = BoardInfo.new(3)
+      ancho = 3
+      board_info = build_board_info(ancho: ancho)
 
-      assert {:error, :out_of_index} == BoardInfo.set(board, 4, 4, "x")
+      assert {:error, :out_of_index} == BoardInfo.set(board_info, 4, 4, "x")
     end
   end
 
   describe "full?/1" do
     test "if is full returns true" do
-      board = BoardInfo.new(2)
+      ancho = 2
+      board = %{build_board(ancho) | {0, 0} => "x", {0, 1} => "x", {1, 0} => "x", {1, 1} => "x"}
+      board_info = build_board_info(ancho: ancho, board: board)
 
-      {:ok, board} = BoardInfo.set(board, 0, 0, "x")
-      {:ok, board} = BoardInfo.set(board, 0, 1, "x")
-      {:ok, board} = BoardInfo.set(board, 1, 0, "x")
-      {:ok, board} = BoardInfo.set(board, 1, 1, "x")
-
-      assert true == BoardInfo.full?(board)
+      assert true == BoardInfo.full?(board_info)
     end
 
     test "if is not full returns false" do
-      board = BoardInfo.new(2)
+      ancho = 2
+      board_info = build_board_info(ancho: ancho)
 
-      assert false == BoardInfo.full?(board)
+      assert false == BoardInfo.full?(board_info)
     end
   end
 
   describe "line_full?/1" do
     test "full row returns true" do
-      board = BoardInfo.new(3)
+      ancho = 3
+      board = %{build_board(ancho) | {0, 0} => "x", {0, 1} => "x", {0, 2} => "x"}
+      board_info = build_board_info(ancho: ancho, board: board)
 
-      {:ok, board} = BoardInfo.set(board, 0, 0, "x")
-      {:ok, board} = BoardInfo.set(board, 0, 1, "x")
-      {:ok, board} = BoardInfo.set(board, 0, 2, "x")
-
-      assert true == BoardInfo.line_full?(board, "x")
+      assert true == BoardInfo.line_full?(board_info, "x")
     end
 
     test "full column returns true" do
-      board = BoardInfo.new(3)
+      ancho = 3
+      board = %{build_board(ancho) | {0, 0} => "x", {1, 0} => "x", {2, 0} => "x"}
+      board_info = build_board_info(ancho: ancho, board: board)
 
-      {:ok, board} = BoardInfo.set(board, 0, 0, "x")
-      {:ok, board} = BoardInfo.set(board, 1, 0, "x")
-      {:ok, board} = BoardInfo.set(board, 2, 0, "x")
-
-      assert true == BoardInfo.line_full?(board, "x")
+      assert true == BoardInfo.line_full?(board_info, "x")
     end
 
     # test "full diagonal returns true" do
-    #   board = BoardInfo.new(3)
+    # ancho = 3
+    # board = %{build_board(ancho) | {0, 0} => "x", {1, 1} => "x", {2, 2} => "x"}
+    # board_info = build_board_info(ancho: ancho, board: board)
 
-    #   {:ok, board} = BoardInfo.set(board, 0, 0, "x")
-    #   {:ok, board} = BoardInfo.set(board, 1, 1, "x")
-    #   {:ok, board} = BoardInfo.set(board, 2, 2, "x")
-
-    #   assert true == BoardInfo.line_full?(board, "x")
+    #   assert true == BoardInfo.line_full?(board_info, "x")
     # end
 
     test "if is not full returns false" do
-      board = BoardInfo.new(2)
+      ancho = 2
+      board_info = build_board_info(ancho: ancho)
 
-      assert false == BoardInfo.line_full?(board, "o")
+      assert false == BoardInfo.line_full?(board_info, "o")
     end
   end
 end

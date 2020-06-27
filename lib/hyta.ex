@@ -19,7 +19,7 @@ defmodule Hyta do
       {:ok, game}
     else
       {:error, {:already_started, _pid}} -> {:error, :already_started}
-      others -> others
+      {:error, reason} -> {:error, reason}
     end
   end
 
@@ -40,12 +40,10 @@ defmodule Hyta do
 
       {:winner, game} ->
         DynamicSupervisor.terminate_child(Hyta.DynamicSupervisor, pid_by_name(game_name))
-
         {:winner, game}
 
       {:empate, game} ->
         DynamicSupervisor.terminate_child(Hyta.DynamicSupervisor, pid_by_name(game_name))
-
         {:empate, game}
 
       {:error, reason} ->

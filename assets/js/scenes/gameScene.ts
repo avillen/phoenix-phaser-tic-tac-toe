@@ -43,7 +43,7 @@ export default class GameScene extends Phaser.Scene {
         // @ts-ignore
         this.scene.start("menuScene");
 
-      } else if (this.gameState.status === "terminated") {
+      } else if (this.gameState.status === "empate") {
         this.statusText.setText("Empate");
         this.gameState = new Game();
         // @ts-ignore

@@ -12,6 +12,8 @@ defmodule Hyta.Boundary.GameSession do
 
   defstruct session: nil
 
+  @name __MODULE__
+
   def child_spec(game_name) do
     %{
       id: __MODULE__,
@@ -24,28 +26,32 @@ defmodule Hyta.Boundary.GameSession do
     GenServer.start_link(__MODULE__, :ok, name: via(game_name))
   end
 
-  def build_game(pid, game_name, creator_player, board_size) do
+  def build_game(pid \\ @name, game_name, creator_player, board_size) do
     board_info = BoardInfo.new(board_size)
 
     GenServer.call(pid, {:build_game, game_name, creator_player, board_info})
   end
 
-  def join_game(pid, player_join) do
+  def join_game(pid \\ @name, player_join) do
     GenServer.call(pid, {:join_game, player_join})
   catch
     :exit, {:noproc, _} -> {:error, :game_not_exists}
   end
 
-  def start_game(pid) do
+  def start_game(pid \\ @name) do
     GenServer.call(pid, :start_game)
   end
 
-  def move(pid, player, x, y) do
+  def move(pid \\ @name, player, x, y) do
     GenServer.call(pid, {:move, player, x, y})
   end
 
-  def get_session(pid) do
+  def get_session(pid \\ @name) do
     GenServer.call(pid, :get_session)
+  end
+
+  def backdoor_set_game(pid \\ @name, game) do
+    GenServer.call(pid, {:backdoor_set_game, game})
   end
 
   def init(:ok) do
@@ -83,6 +89,12 @@ defmodule Hyta.Boundary.GameSession do
 
   def handle_call(:get_session, _from, state) do
     {:reply, state.session, state}
+  end
+
+  def handle_call({:backdoor_set_game, game}, _from, state) do
+    new_state = %{state | session: game}
+
+    {:reply, new_state, new_state}
   end
 
   defp via(game_name), do: {:via, Registry, {Hyta.Registry, game_name}}

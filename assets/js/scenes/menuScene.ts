@@ -25,22 +25,20 @@ export default class MenuScene extends Phaser.Scene {
     element.parent.style.overflow = null;
 
     element.on("click", event => {
-      // @ts-ignore
-      let username = document.getElementById("username").value;
-      // @ts-ignore
-      let game = document.getElementById("game").value;
+      var username = (<HTMLInputElement>document.getElementById("username")).value;
+      var game = (<HTMLInputElement>document.getElementById("game")).value;
 
       if (event.target.name === "joinButton") {
-        if (username.value !== "" && game.value !== "") {
-          let sceneParams = {action: "join", username: username, game: game};
+        if (username !== "" && game !== "") {
+          let sceneParams = { action: "join", username: username, game: game };
 
           selfCanvas.style.display = "block";
           // @ts-ignore
           this.scene.start("gameScene", sceneParams);
         }
       } else if (event.target.name === "createButton") {
-        if (username.value !== "" && game.value !== "") {
-          let sceneParams = {action: "create", username: username, game: game};
+        if (username !== "" && game !== "") {
+          let sceneParams = { action: "create", username: username, game: game };
 
           selfCanvas.style.display = "block";
           // @ts-ignore

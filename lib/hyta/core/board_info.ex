@@ -10,9 +10,11 @@ defmodule Hyta.Core.BoardInfo do
           ancho: non_neg_integer()
         }
 
-  defstruct board: %{}, ancho: 3
+  defstruct ~w(board ancho)a
 
-  @spec new(non_neg_integer()) :: BoardInfo.t()
+  @type ancho :: non_neg_integer()
+
+  @spec new(ancho) :: BoardInfo.t()
   def new(ancho) do
     %BoardInfo{
       board: build_board(ancho),
@@ -20,18 +22,18 @@ defmodule Hyta.Core.BoardInfo do
     }
   end
 
-  @spec set(BoardInfo.t(), non_neg_integer(), non_neg_integer(), any()) ::
-          {:ok, BoardInfo.t()} | {:error, :position_taken} | {:error, :out_of_index}
+  @type position :: non_neg_integer()
+  @type value :: any()
+
+  @spec set(BoardInfo.t(), position, position, value) ::
+          {:ok, BoardInfo.t()}
+          | {:error, :position_taken}
+          | {:error, :out_of_index}
   def set(%BoardInfo{board: board} = state, x, y, value) do
     case Map.fetch(board, {x, y}) do
-      {:ok, nil} ->
-        {:ok, %{state | board: Map.put(board, {x, y}, value)}}
-
-      {:ok, _} ->
-        {:error, :position_taken}
-
-      :error ->
-        {:error, :out_of_index}
+      {:ok, nil} -> {:ok, %{state | board: put_in_board(board, x, y, value)}}
+      {:ok, _} -> {:error, :position_taken}
+      :error -> {:error, :out_of_index}
     end
   end
 
@@ -51,6 +53,17 @@ defmodule Hyta.Core.BoardInfo do
       column_full?(board, ancho, value) ||
       diagonal_full?(board, ancho, value)
   end
+
+  defp build_board(ancho) do
+    for x <- 0..(ancho - 1), y <- 0..(ancho - 1), into: %{} do
+      position = {x, y}
+      value = nil
+
+      {position, value}
+    end
+  end
+
+  defp put_in_board(board, x, y, value), do: Map.put(board, {x, y}, value)
 
   defp row_full?(board, ancho, value) do
     board
@@ -75,14 +88,5 @@ defmodule Hyta.Core.BoardInfo do
 
   defp diagonal_full?(_board, _ancho, _value) do
     false
-  end
-
-  defp build_board(ancho) do
-    for x <- 0..(ancho - 1), y <- 0..(ancho - 1), into: %{} do
-      position = {x, y}
-      value = nil
-
-      {position, value}
-    end
   end
 end

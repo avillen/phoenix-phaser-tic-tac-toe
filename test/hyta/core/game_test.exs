@@ -1,15 +1,29 @@
 defmodule Hyta.Core.GameTest do
   use ExUnit.Case, async: true
 
-  alias Hyta.Core.{
-    BoardInfo,
-    Game,
-    Player
-  }
+  import Hyta.Support.Core.Player,
+    only: [
+      build_player: 0
+    ]
+
+  import Hyta.Support.Core.BoardInfo,
+    only: [
+      build_board_info: 0,
+      build_board_info: 1
+    ]
+
+  import Hyta.Support.Core.Game,
+    only: [
+      build_new_game: 0,
+      build_ready_game: 0,
+      build_started_game: 1
+    ]
+
+  alias Hyta.Core.Game
 
   test "new/1" do
-    player = Player.new(%{nick: "Yago"})
-    board_info = BoardInfo.new(3)
+    player = build_player()
+    board_info = build_board_info()
     game_name = "#{__MODULE__}-game_name"
 
     game = Game.new(game_name, player, board_info)
@@ -26,34 +40,24 @@ defmodule Hyta.Core.GameTest do
 
   describe "join/2" do
     test "you can join to the game" do
-      player_1 = Player.new(%{nick: "Yago"})
-      player_2 = Player.new(%{nick: "Hugo"})
-      game_name = "#{__MODULE__}-game_name"
-      board_info = BoardInfo.new(3)
+      player_2 = build_player()
+      game = build_new_game()
 
-      game = Game.new(game_name, player_1, board_info)
+      response = %Game{
+        name: game.name,
+        board_info: game.board_info,
+        player_1: game.player_1,
+        player_2: player_2,
+        status: :ready,
+        turn: nil
+      }
 
-      {:ok, game} = Game.join(game, player_2)
-
-      assert %Game{
-               name: game.name,
-               board_info: board_info,
-               player_1: player_1,
-               player_2: player_2,
-               status: :ready,
-               turn: nil
-             } == game
+      assert {:ok, response} == Game.join(game, player_2)
     end
 
-    test "you can't join to the game because there is another player" do
-      player_1 = Player.new(%{nick: "Yago"})
-      player_2 = Player.new(%{nick: "Hugo"})
-      player_3 = Player.new(%{nick: "Alvaro"})
-      game_name = "#{__MODULE__}-game_name"
-      board_info = BoardInfo.new(3)
-
-      game = Game.new(game_name, player_1, board_info)
-      {:ok, game} = Game.join(game, player_2)
+    test "you can't join to the game because there is another player and the game is ready" do
+      player_3 = build_player()
+      game = build_ready_game()
 
       assert {:error, :full_game} == Game.join(game, player_3)
     end
@@ -61,31 +65,23 @@ defmodule Hyta.Core.GameTest do
 
   describe "start/1" do
     test "the game starts" do
-      player_1 = Player.new(%{nick: "Yago"})
-      player_2 = Player.new(%{nick: "Hugo"})
-      game_name = "#{__MODULE__}-game_name"
-      board_info = BoardInfo.new(3)
-      game = Game.new(game_name, player_1, board_info)
+      player = build_player()
+      game = build_started_game(player_1: player, turn: player)
 
-      {:ok, game} = Game.join(game, player_2)
-      {:ok, game} = Game.start(game)
+      response = %Game{
+        name: game.name,
+        board_info: game.board_info,
+        player_1: player,
+        player_2: game.player_2,
+        status: :started,
+        turn: game.turn
+      }
 
-      assert %Game{
-               name: game.name,
-               board_info: board_info,
-               player_1: player_1,
-               player_2: player_2,
-               status: :started,
-               turn: game.turn
-             } == game
+      assert {:ok, response} == Game.start(game, fn _ -> player end)
     end
 
     test "can't start because there is a missing player" do
-      player_1 = Player.new(%{nick: "Yago"})
-      game_name = "#{__MODULE__}-game_name"
-      board_info = BoardInfo.new(3)
-
-      game = Game.new(game_name, player_1, board_info)
+      game = build_new_game()
 
       {:error, :missing_players} = Game.start(game)
     end
@@ -93,14 +89,8 @@ defmodule Hyta.Core.GameTest do
 
   describe "move/3" do
     setup do
-      player_1 = Player.new(%{nick: "Yago"})
-      player_2 = Player.new(%{nick: "Hugo"})
-      game_name = "#{__MODULE__}-game_name"
-      board_info = BoardInfo.new(3)
-      game = Game.new(game_name, player_1, board_info)
-
-      {:ok, game} = Game.join(game, player_2)
-      {:ok, game} = Game.start(game)
+      board_info = build_board_info(ancho: 3)
+      game = build_started_game(board_info: board_info)
 
       %{game: game}
     end
