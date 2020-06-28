@@ -115,13 +115,13 @@ defmodule Hyta.Core.GameTest do
       {:ok, game} = Game.move(game, game.turn, 0, 0)
       {:ok, game} = Game.move(game, game.turn, 0, 1)
       {:ok, game} = Game.move(game, game.turn, 0, 2)
-      {:ok, game} = Game.move(game, game.turn, 1, 0)
-      {:ok, game} = Game.move(game, game.turn, 1, 1)
       {:ok, game} = Game.move(game, game.turn, 1, 2)
+      {:ok, game} = Game.move(game, game.turn, 1, 0)
       {:ok, game} = Game.move(game, game.turn, 2, 0)
-      {:ok, game} = Game.move(game, game.turn, 2, 1)
+      {:ok, game} = Game.move(game, game.turn, 1, 1)
+      {:ok, game} = Game.move(game, game.turn, 2, 2)
 
-      assert {:empate, _} = Game.move(game, game.turn, 2, 2)
+      assert {:empate, _} = Game.move(game, game.turn, 2, 1)
     end
   end
 end

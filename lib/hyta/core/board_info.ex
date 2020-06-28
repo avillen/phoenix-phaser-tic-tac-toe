@@ -86,7 +86,27 @@ defmodule Hyta.Core.BoardInfo do
     |> Enum.any?(fn x -> x == true end)
   end
 
-  defp diagonal_full?(_board, _ancho, _value) do
-    false
+  defp diagonal_full?(board, ancho, value) do
+    diagonal_1 =
+      board
+      |> Map.values()
+      |> Enum.chunk_every(ancho)
+      |> check_diagonal(value)
+
+    diagonal_2 =
+      board
+      |> Map.values()
+      |> Enum.chunk_every(ancho)
+      |> Enum.reverse()
+      |> check_diagonal(value)
+
+    diagonal_1 || diagonal_2
+  end
+
+  defp check_diagonal(board_lists, value) do
+    board_lists
+    |> Enum.with_index()
+    |> Enum.map(fn {row, index} -> Enum.at(row, index) end)
+    |> Enum.all?(fn x -> x == value end)
   end
 end

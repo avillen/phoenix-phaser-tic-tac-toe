@@ -29,20 +29,20 @@ defmodule HytaTest do
       player_1 = build_player()
       player_2 = build_player()
 
-      {:ok, _game} = Hyta.create_game(game_name, player_1)
+      {:ok, _game} = Hyta.create_game(game_name, player_1, 3)
 
       assert {:ok, game} = Hyta.join_game(game_name, player_2)
 
       {:ok, game} = Hyta.move(game_name, game.turn, 0, 0)
       {:ok, game} = Hyta.move(game_name, game.turn, 0, 1)
       {:ok, game} = Hyta.move(game_name, game.turn, 0, 2)
-      {:ok, game} = Hyta.move(game_name, game.turn, 1, 0)
-      {:ok, game} = Hyta.move(game_name, game.turn, 1, 1)
       {:ok, game} = Hyta.move(game_name, game.turn, 1, 2)
+      {:ok, game} = Hyta.move(game_name, game.turn, 1, 0)
       {:ok, game} = Hyta.move(game_name, game.turn, 2, 0)
-      {:ok, game} = Hyta.move(game_name, game.turn, 2, 1)
+      {:ok, game} = Hyta.move(game_name, game.turn, 1, 1)
+      {:ok, game} = Hyta.move(game_name, game.turn, 2, 2)
 
-      assert {:empate, _} = Hyta.move(game_name, game.turn, 2, 2)
+      assert {:empate, _} = Hyta.move(game_name, game.turn, 2, 1)
       assert [] == Registry.lookup(Hyta.Registry, game.name)
     end
   end
@@ -52,7 +52,7 @@ defmodule HytaTest do
       game_name = "#{@name}-get_game-success-game_name"
       player = build_player()
 
-      {:ok, game} = Hyta.create_game(game_name, player)
+      {:ok, game} = Hyta.create_game(game_name, player, 3)
 
       assert game == Hyta.get_game(game_name)
     end

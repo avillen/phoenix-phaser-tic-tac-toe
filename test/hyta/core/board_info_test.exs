@@ -80,13 +80,21 @@ defmodule Hyta.Core.BoardInfoTest do
       assert true == BoardInfo.line_full?(board_info, "x")
     end
 
-    # test "full diagonal returns true" do
-    # ancho = 3
-    # board = %{build_board(ancho) | {0, 0} => "x", {1, 1} => "x", {2, 2} => "x"}
-    # board_info = build_board_info(ancho: ancho, board: board)
+    test "full diagonal returns true" do
+      ancho = 4
+      board = %{build_board(ancho) | {0, 0} => "x", {1, 1} => "x", {2, 2} => "x", {3, 3} => "x"}
+      board_info = build_board_info(ancho: ancho, board: board)
 
-    #   assert true == BoardInfo.line_full?(board_info, "x")
-    # end
+      assert true == BoardInfo.line_full?(board_info, "x")
+    end
+
+    test "other full diagonal returns true" do
+      ancho = 3
+      board = %{build_board(ancho) | {0, 2} => "x", {1, 1} => "x", {2, 0} => "x"}
+      board_info = build_board_info(ancho: ancho, board: board)
+
+      assert true == BoardInfo.line_full?(board_info, "x")
+    end
 
     test "if is not full returns false" do
       ancho = 2
