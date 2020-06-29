@@ -23,7 +23,7 @@ export default class Game {
   }
 
   createGame(gameName: string, playerName: string, boardSize: number) {
-    let createParams = {username: playerName, game_name: gameName}
+    let createParams = {player_name: playerName, game_name: gameName}
 
     this.boardInfo = new BoardInfo({size: boardSize});
 
@@ -59,7 +59,7 @@ export default class Game {
 
     this.channel.join();
 
-    this.channel.push("join", {username: playerName, game_name: gameName})
+    this.channel.push("join", {player_name: playerName, game_name: gameName})
       .receive("error", (resp: any) => { this.errorMessage = resp.response });
 
     this.channel.on("join", (resp: any) => {
@@ -85,7 +85,7 @@ export default class Game {
   }
 
   move(index: number) {
-    let moveParams = {username: this.player, game_name: this.name, index: index};
+    let moveParams = {player_name: this.player, game_name: this.name, index: index};
 
     this.channel.push("move", moveParams);
   }

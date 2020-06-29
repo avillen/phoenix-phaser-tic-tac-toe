@@ -30,12 +30,8 @@ module.exports = (env, options) => {
           test: /\.(j|t)s$/,
           exclude: /node_modules/,
           use: [
-            {
-              loader: 'babel-loader'
-            },
-            {
-              loader: 'ts-loader'
-            }
+            { loader: 'babel-loader' },
+            { loader: 'ts-loader' }
           ]
         },
         {

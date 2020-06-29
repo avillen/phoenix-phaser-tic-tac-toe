@@ -5,10 +5,10 @@ defmodule Hyta.Support.Core.BoardInfo do
 
   alias Hyta.Core.BoardInfo
 
-  import Hyta.Support.Shared, only: [build_random_integer: 0]
+  import Hyta.Support.Shared, only: [build_random_integer: 1]
 
   def build_board_info(attrs \\ []) do
-    ancho = Keyword.get(attrs, :ancho, build_random_integer())
+    ancho = Keyword.get(attrs, :ancho, build_random_integer(min: 3))
 
     %BoardInfo{
       ancho: ancho,

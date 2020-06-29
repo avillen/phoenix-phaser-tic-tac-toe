@@ -11,7 +11,8 @@ defmodule HytaTest do
       game = build_new_game()
 
       assert {:ok, game} == Hyta.create_game(game.name, game.player_1, game.board_info.ancho)
-      assert [{_, nil}] = Registry.lookup(Hyta.Registry, game.name)
+      assert [{pid, nil}] = Registry.lookup(Hyta.Registry, game.name)
+      assert Process.alive?(pid)
     end
 
     test "game already_started" do
@@ -43,6 +44,7 @@ defmodule HytaTest do
       {:ok, game} = Hyta.move(game_name, game.turn, 2, 2)
 
       assert {:empate, _} = Hyta.move(game_name, game.turn, 2, 1)
+      :timer.sleep(100)
       assert [] == Registry.lookup(Hyta.Registry, game.name)
     end
   end

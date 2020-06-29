@@ -22,7 +22,7 @@ defmodule HytaWeb.GameChannelTest do
 
       assert {:ok, _, socket} = subscribe_and_join(user_socket, "game:#{game_name}")
 
-      _ref = push(socket, "create", %{"username" => player_name, "game_name" => game_name})
+      _ref = push(socket, "create", %{"player_name" => player_name, "game_name" => game_name})
 
       assert_broadcast "create", %{response: _}
     end
@@ -37,8 +37,8 @@ defmodule HytaWeb.GameChannelTest do
 
       assert {:ok, _, socket} = subscribe_and_join(user_socket, "game:#{game_name}")
 
-      _ = push(socket, "create", %{"username" => player_name_1, "game_name" => game_name})
-      _ = push(socket, "join", %{"username" => player_name_2, "game_name" => game_name})
+      _ = push(socket, "create", %{"player_name" => player_name_1, "game_name" => game_name})
+      _ = push(socket, "join", %{"player_name" => player_name_2, "game_name" => game_name})
 
       assert_broadcast "join", %{response: _}
     end
@@ -53,12 +53,12 @@ defmodule HytaWeb.GameChannelTest do
 
   #     assert {:ok, _, socket} = subscribe_and_join(user_socket, "game:#{game_name}")
 
-  #     _ = push(socket, "create", %{"username" => player_name_1, "game_name" => game_name})
-  #     _ = push(socket, "join", %{"username" => player_name_2, "game_name" => game_name})
+  #     _ = push(socket, "create", %{"player_name" => player_name_1, "game_name" => game_name})
+  #     _ = push(socket, "join", %{"player_name" => player_name_2, "game_name" => game_name})
 
   #     _ =
   #       push(socket, "move", %{
-  #         "username" => player_name_2,
+  #         "player_name" => player_name_2,
   #         "game_name" => game_name,
   #         "index" => 3
   #       })

@@ -15,8 +15,8 @@ defmodule HytaWeb.GameChannel do
     {:ok, socket}
   end
 
-  def handle_in("create", %{"username" => username, "game_name" => game_name}, socket) do
-    player = Player.new(%{nick: username})
+  def handle_in("create", %{"player_name" => player_name, "game_name" => game_name}, socket) do
+    player = Player.new(%{nick: player_name})
 
     case Hyta.create_game(game_name, player) do
       {:ok, game} ->
@@ -29,8 +29,8 @@ defmodule HytaWeb.GameChannel do
     end
   end
 
-  def handle_in("join", %{"username" => username, "game_name" => game_name}, socket) do
-    player = Player.new(%{nick: username})
+  def handle_in("join", %{"player_name" => player_name, "game_name" => game_name}, socket) do
+    player = Player.new(%{nick: player_name})
 
     case Hyta.join_game(game_name, player) do
       {:ok, game} ->
@@ -45,10 +45,10 @@ defmodule HytaWeb.GameChannel do
 
   def handle_in(
         "move",
-        %{"username" => username, "game_name" => game_name, "index" => index},
+        %{"player_name" => player_name, "game_name" => game_name, "index" => index},
         socket
       ) do
-    player = Player.new(%{nick: username})
+    player = Player.new(%{nick: player_name})
 
     game = Hyta.get_game(game_name)
     {x, y} = build_coordinates(index, game.board_info.ancho)

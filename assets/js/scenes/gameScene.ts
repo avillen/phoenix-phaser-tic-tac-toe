@@ -15,15 +15,15 @@ export default class GameScene extends Phaser.Scene {
     this.gameState = new Game();
   }
 
-  create(config: {action: string, game: string, username: string}) {
+  create(config: {action: string, game_name: string, player_name: string}) {
     // @ts-ignore
     this.statusText = this.add.text(16, 16, "", fontConfig);
 
     if (config.action == "create") {
-      this.gameState.createGame(config.game, config.username, gameOptions.boardSize);
+      this.gameState.createGame(config.game_name, config.player_name, gameOptions.boardSize);
 
     } else {
-      this.gameState.joinGame(config.game, config.username);
+      this.gameState.joinGame(config.game_name, config.player_name);
     }
   }
 
