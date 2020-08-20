@@ -33,19 +33,19 @@ defmodule Hyta.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.1"},
+      {:phoenix, "~> 1.5.4"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2.4", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.2.6"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
+      {:phoenix_live_dashboard, "~> 0.2.7"},
+      {:telemetry_metrics, "~> 0.5.0"},
+      {:telemetry_poller, "~> 0.5.1"},
+      {:gettext, "~> 0.18.1"},
+      {:jason, "~> 1.2.1"},
       {:plug_cowboy, "~> 2.3.0"},
 
       # dev
-      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+      {:credo, "~> 1.4.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0.0", only: [:dev], runtime: false}
     ]
   end
 
